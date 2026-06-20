@@ -4,319 +4,575 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ベネルクス連合王国 - わいくらサーバー</title>
+    
+    <link rel="icon" href="https://i.imgur.com/CNSHA5D.png" type="image/png" sizes="192x192">
+    <link rel="apple-touch-icon" href="https://i.imgur.com/CNSHA5D.png">
+    
     <style>
-        /* 基本設定（黒・灰色・薄灰色） */
-        body {
+        :root[data-theme="light"] {
+            --bg-color: #f0f2f5;
+            --text-main: #070707;
+            --text-sub: #272727;
+            --glass-bg: rgba(255, 255, 255, 0.4);
+            --glass-border: rgba(93, 93, 93, 0.3);
+            --accent: #333333;
+            --card-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.05);
+        }
+
+        :root[data-theme="dark"] {
+            --bg-color: #0a0a0a;
+            --text-main: #ffffff;
+            --text-sub: #a1a1a6;
+            --glass-bg: rgba(20, 20, 20, 0.6);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --accent: #ffffff;
+            --card-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.8);
+        }
+
+        :root[data-theme="main"] {
+            --bg-color: #1a1a1a;
+            --text-main: #e0e0e0;
+            --text-sub: #888888;
+            --glass-bg: rgba(40, 40, 40, 0.7);
+            --glass-border: rgba(100, 100, 100, 0.2);
+            --accent: #cccccc;
+            --card-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.5);
+        }
+
+        * {
             margin: 0;
             padding: 0;
-            font-family: 'Segoe UI', 'Helvetica Neue', sans-serif;
-            color: #e0e0e0;
-            background-color: #000;
-            background-image: url('https://i.imgur.com/sg22crx.png'); 
+            box-sizing: border-box;
+            transition: background 0.4s ease, color 0.4s ease, transform 0.3s ease, left 0.3s ease;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.8;
+            font-family: 'Inter', -apple-system, sans-serif;
+            display: flex;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* 背景レイヤー */
+        .bg-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -1;
+            background-image: linear-gradient(var(--bg-color), var(--bg-color)), url('https://i.imgur.com/sg22crx.png');
+            background-blend-mode: saturation;
             background-attachment: fixed;
             background-size: cover;
             background-position: center;
         }
 
-        /* 50%透明の黒レイヤー */
-        .overlay {
-            background-color: rgba(0, 0, 0, 0.5);
-            min-height: 100vh;
-            width: 100%;
+        h1, h2 {
+            font-family: "Lora", "HG Mincho B", "游明朝", serif;
+            letter-spacing: 0.05em;
+        }
+
+        .glass {
+            background: var(--glass-bg);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--card-shadow);
+        }
+
+        /* --- サイドバー設定 --- */
+        sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 260px;
+            height: 100vh;
+            z-index: 2000;
             display: flex;
             flex-direction: column;
+            padding: 30px 20px;
+            border-radius: 0 20px 20px 0;
+            border-left: none;
         }
 
-        header {
-            padding: 60px 20px 40px;
-            text-align: center;
-        }
-
-        header h1 {
-            margin: 0;
-            font-size: 3rem;
-            letter-spacing: 8px;
-            color: #ffffff;
-            text-transform: uppercase;
-            text-shadow: 2px 2px 10px rgba(0,0,0,0.8);
-        }
-
-        /* ナビゲーション */
-        nav {
+        .sidebar-brand {
             display: flex;
-            justify-content: center;
-            background: rgba(30, 30, 30, 0.95);
-            border-top: 1px solid #444;
-            border-bottom: 1px solid #444;
-            position: sticky;
-            top: 0;
-            z-index: 100;
+            align-items: center;
+            margin-bottom: 40px;
+            text-decoration: none;
+        }
+
+        .img-logo {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            margin-right: 12px;
+            border: 1px solid var(--glass-border);
+        }
+
+        .logo-text {
+            font-family: "Outfit", sans-serif;
+            font-weight: 900;
+            font-size: 1.2rem;
+            letter-spacing: 0.1em;
+            color: var(--text-main);
+        }
+
+        /* サイドバーメニュー */
+        .sidebar-menu {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            flex: 1;
         }
 
         .nav-item {
-            padding: 15px 30px;
-            cursor: pointer;
-            font-size: 0.9rem;
-            color: #888;
-            transition: 0.3s;
-            border-bottom: 3px solid transparent;
+            padding: 14px 20px;
+            color: var(--text-main);
+            font-size: 0.95rem;
+            font-weight: 500;
             letter-spacing: 1px;
+            opacity: 0.6;
+            cursor: pointer;
+            border-radius: 10px;
+            transition: all 0.2s ease;
+            border-left: 4px solid transparent;
         }
 
-        .nav-item:hover { color: #fff; }
+        .nav-item:hover {
+            opacity: 1;
+            background: rgba(128, 128, 128, 0.08);
+            padding-left: 24px; /* ホバー時に少し右に動くアニメーション */
+        }
+
         .nav-item.active {
-            color: #fff;
-            border-bottom: 3px solid #eee;
-            background: rgba(255, 255, 255, 0.05);
+            opacity: 1;
+            background: rgba(128, 128, 128, 0.15);
+            border-left: 4px solid var(--accent);
+            font-weight: 700;
+            padding-left: 24px;
         }
 
-        /* コンテンツエリア */
-        .content-wrapper {
+        /* テーマスイッチャー */
+        .sidebar-footer {
+            margin-top: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .theme-switcher {
+            display: flex;
+            gap: 6px;
+            padding: 4px;
+            background: rgba(128,128,128,0.1);
+            border-radius: 30px;
+            justify-content: space-between;
+        }
+
+        .theme-btn {
             flex: 1;
-            max-width: 900px;
-            margin: 40px auto;
-            width: 90%;
+            height: 28px;
+            border-radius: 50%;
+            border: none;
+            cursor: pointer;
+            font-size: 10px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* --- メインコンテンツ領域（PC・スマホで最適化） --- */
+        main {
+            flex: 1;
+            padding: 60px 40px;
+            max-width: 1200px;
+            margin-left: 260px; /* PCではサイドバーの幅だけ右に寄せる */
+            width: calc(100% - 260px);
+        }
+
+        /* ヒーローエリア */
+        .hero {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 40px 0;
+        }
+
+        .hero h1 {
+            font-size: clamp(2.5rem, 6vw, 4rem);
+            margin-bottom: 10px;
+            background: linear-gradient(to bottom, var(--text-main), var(--text-sub));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .container {
+            width: 100%;
         }
 
         .page-content {
             display: none;
-            background: rgba(15, 15, 15, 0.9);
-            padding: 40px;
-            border: 1px solid #333;
-            animation: fadeIn 0.5s ease;
+            padding: 50px 40px;
+            border-radius: 16px;
+            animation: reveal 0.5s ease forwards;
         }
 
-        .page-content.active { display: block; }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+        .page-content.active {
+            display: block;
         }
 
         h2 {
-            border-left: 5px solid #fff;
+            font-size: 1.8rem;
+            margin-bottom: 25px;
+            border-left: 4px solid var(--accent);
             padding-left: 15px;
-            margin: 30px 0 20px;
-            font-size: 1.6rem;
-            letter-spacing: 1px;
         }
-
-        h2:first-child { margin-top: 0; }
 
         h3 {
-            color: #fff;
-            border-bottom: 1px solid #444;
+            font-family: "Montserrat", sans-serif;
+            font-weight: 700;
+            margin: 30px 0 15px;
+            color: var(--text-main);
+            border-bottom: 1px solid var(--glass-border);
             padding-bottom: 5px;
-            margin-top: 25px;
         }
 
-        p { line-height: 1.8; color: #bbb; }
+        p {
+            color: var(--text-sub);
+            margin-bottom: 20px;
+        }
 
-        /* 国旗 */
+        ul {
+            padding-left: 20px;
+            color: var(--text-sub);
+            margin-bottom: 20px;
+        }
+
+        li {
+            margin-bottom: 8px;
+        }
+
+        .info-box {
+            background: rgba(128, 128, 128, 0.04);
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid var(--glass-border);
+            margin-bottom: 25px;
+            color: var(--text-main); /* ダークモードでの視認性を向上 */
+        }
+
         .flag-container {
             text-align: center;
-            margin: 20px 0;
-            padding: 20px;
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid #333;
+            margin: 30px 0;
+            padding: 30px;
+            background: rgba(128, 128, 128, 0.03);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
         }
 
         .flag-image {
             width: 100%;
             max-width: 450px;
             height: auto;
-            border: 1px solid #444;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.7);
+            border-radius: 6px;
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--card-shadow);
         }
 
-        /* 外部リンク */
-        a { color: #888; transition: 0.3s; }
-        a:hover { color: #fff; }
+        /* 無限スライダー */
+        .military-slider {
+            width: 100%;
+            overflow: hidden;
+            background: rgba(128, 128, 128, 0.03);
+            padding: 20px 0;
+            margin: 40px 0;
+            border-top: 1px solid var(--glass-border);
+            border-bottom: 1px solid var(--glass-border);
+            border-radius: 8px;
+        }
+
+        .slider-track {
+            display: flex;
+            width: calc(220px * 10); 
+            animation: scroll 25s linear infinite;
+        }
+
+        .slider-track img {
+            width: 200px;
+            height: 120px;
+            margin: 0 10px;
+            object-fit: cover;
+            border-radius: 6px;
+            border: 1px solid var(--glass-border);
+            filter: grayscale(40%);
+        }
+
+        .slider-track img:hover {
+            filter: grayscale(0%);
+            transform: scale(1.05);
+        }
+
+        @keyframes scroll {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(calc(-220px * 5)); }
+        }
+
+        .military-slider:hover .slider-track {
+            animation-play-state: paused;
+        }
+
+        a {
+            color: var(--text-main);
+            text-decoration: underline;
+            opacity: 0.8;
+        }
+        
+        a:hover { opacity: 1; }
+
+        .discord-section {
+            margin-top: 20px;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid var(--glass-border);
+        }
+
+        @keyframes reveal {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
 
         footer {
+            margin-top: 60px;
+            padding: 40px 0;
             text-align: center;
-            padding: 30px;
-            color: #555;
-            font-size: 0.75rem;
-            letter-spacing: 1px;
+            border-top: 1px solid var(--glass-border);
+            color: var(--text-main);
+            font-size: 0.8rem;
         }
 
-        .discord-section { margin-top: 20px; }
-
-        /* 軍事セクション用の強調 */
-        .military-box {
-            background: rgba(40, 40, 40, 0.5);
-            padding: 15px;
-            border-radius: 4px;
-            border: 1px solid #555;
+        /* モバイル用トグルボタン */
+        .menu-toggle {
+            display: none;
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 45px;
+            height: 45px;
+            z-index: 3000;
+            border-radius: 50%;
+            border: none;
+            cursor: pointer;
+            font-size: 1.2rem;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-main);
         }
-        /* 無限スライダーの設定 */
-.military-slider {
-    width: 100%;
-    overflow: hidden;
-    background: rgba(20, 20, 20, 0.8);
-    padding: 20px 0;
-    margin: 20px 0;
-    border-top: 1px solid #333;
-    border-bottom: 1px solid #333;
-}
 
-.slider-track {
-    display: flex;
-    /* 画像の幅(200px) + 余白(20px) = 220px。5枚分流れたらループするように設定 */
-    width: calc(220px * 10); 
-    animation: scroll 25s linear infinite;
-}
-
-.slider-track img {
-    width: 200px;
-    height: 120px;
-    margin: 0 10px;
-    object-fit: cover;
-    border: 1px solid #444;
-    filter: grayscale(30%); /* 少し軍事国家っぽく渋めに */
-    transition: 0.3s;
-}
-
-.slider-track img:hover {
-    filter: grayscale(0%);
-    transform: scale(1.05);
-}
-
-/* アニメーション：左へスライド */
-@keyframes scroll {
-    0% { transform: translateX(0); }
-    100% { transform: translateX(calc(-220px * 5)); } /* 5枚分（セットの半分）進んだらリセット */
-}
-
-/* ホバーで一時停止 */
-.military-slider:hover .slider-track {
-    animation-play-state: paused;
-}
+        /* --- レスポンシブ（スマホ・タブレット対応） --- */
+        @media (max-width: 992px) {
+            sidebar {
+                left: -260px; /* 画面外へ隠す */
+            }
+            sidebar.open {
+                left: 0;
+            }
+            main {
+                margin-left: 0; /* スマホでは回り込みをリセット */
+                width: 100%;
+                padding: 80px 20px 40px;
+            }
+            .menu-toggle {
+                display: flex; /* スマホ環境でのみ表示 */
+            }
+            .page-content {
+                padding: 30px 20px;
+            }
+        }
     </style>
 </head>
-<body>
+<body data-theme="main">
 
-<div class="overlay">
-    <header>
-        <h1>BENELUX</h1>
-        <p style="color: #666; font-size: 0.9rem; letter-spacing: 2px;">United Kingdom of Benelux</p>
-    </header>
+    <div class="bg-overlay"></div>
 
-    <nav>
-        <div class="nav-item active" onclick="showPage('home', this)">HOME</div>
-        <div class="nav-item" onclick="showPage('about', this)">ABOUT</div>
-        <div class="nav-item" onclick="showPage('charter', this)">LINKS</div>
-        <div class="nav-item" onclick="showPage('recruit', this)">RECRUIT</div>
-    </nav>
+    <button class="menu-toggle glass" onclick="toggleSidebar()">☰</button>
 
-    <div class="content-wrapper">
-        <div id="home" class="page-content active">
-            <h2>Welcome</h2>
-            <p>ベネルクス連合王国の公式ポータルへようこそ。我々は「わいくら」サーバーにおいて、秩序と繁栄を追求する連合王国です。</p>
-            <p><strong>最新ニュース：</strong> 住民が6人を突破しました！</p>
-            
-            <h2>国家情報</h2>
-            <p>
-                ■ 首都：アムステルダム<br>
-                ■ 所在：ベネルクス地域、鹿児島県<br>
-                ■ イデオロギー：立憲共民主義<br>
-                ■ 主要産業：貿易 (鉄)、小麦
-            </p>
-            
-            <h2>国旗</h2>
-            <div class="flag-container">
-                <img src="https://i.imgur.com/CNSHA5D.png" alt="国旗" class="flag-image">
-            </div>
-
-            <div class="military-slider">
-    <div class="slider-track">
-        <img src="https://i.imgur.com/BInF9FA.png" alt="景観1">
-        <img src="https://i.imgur.com/kHHBIWn.png" alt="景観2">
-        <img src="https://i.imgur.com/sDjDnhm.png" alt="景観3">
-        <img src="https://i.imgur.com/xmL9zWk.png" alt="景観4">
-        <img src="https://i.imgur.com/829jk52.png" alt="地図">
+    <sidebar class="glass">
+        <a href="#" class="sidebar-brand">
+            <img src="https://i.imgur.com/CNSHA5D.png" alt="Logo" class="img-logo">
+            <span class="logo-text">ベネルクス</span>
+        </a>
         
-        <img src="https://i.imgur.com/BInF9FA.png" alt="景観1">
-        <img src="https://i.imgur.com/kHHBIWn.png" alt="景観2">
-        <img src="https://i.imgur.com/sDjDnhm.png" alt="景観3">
-        <img src="https://i.imgur.com/xmL9zWk.png" alt="景観4">
-        <img src="https://i.imgur.com/829jk52.png" alt="地図">
-    </div>
-</div>
+        <nav class="sidebar-menu">
+            <div class="nav-item active" onclick="showPage('home', this)">HOME</div>
+            <div class="nav-item" onclick="showPage('about', this)">ABOUT</div>
+            <div class="nav-item" onclick="showPage('charter', this)">LINKS</div>
+            <div class="nav-item" onclick="showPage('recruit', this)">RECRUIT</div>
+        </nav>
 
-            <h2>構成地域</h2>
-            <p>ベネルクス連合王国は、欧州本土とアジアの拠点が結集した連邦制国家です。</p>
-            <ul>
-                <li>オランダ王国</li>
-                <li>ベルギー王国</li>
-                <li>ルクセンブルク大公国</li>
-                <li>鹿児島県（アジア）</li>
-            </ul>
-
-            <h2>最新ニュース</h2>
-            <p>・2026/03/07 - 国土面積が拡大！世界面積ランキング9位にランクイン！</p>
-            <p>・2026/03/07 - 住民が6人突破！</p>
-            <p>・2026/02/20 - ベネルクス連合王国、正式に誕生！</p>
+        <div class="sidebar-footer">
+            <div class="theme-switcher">
+                <button class="theme-btn" onclick="setTheme('light')" title="Light" style="background:#fff; color:#000">L</button>
+                <button class="theme-btn" onclick="setTheme('dark')" title="Dark" style="background:#333; color:#fff">D</button>
+                <button class="theme-btn" onclick="setTheme('main')" title="Main" style="background:#666; color:#fff">M</button>
+            </div>
         </div>
+    </sidebar>
 
-        <div id="about" class="page-content">
-            <h2>我々について</h2>
-            <p>ベネルクス連合王国は、強固な守りと規律を兼ね備えた「軍事国家」を目指しています。</p>
+    <main>
+        <section class="hero">
+            <h1>BENELUX</h1>
+            <p style="color: var(--text-sub); letter-spacing: 2px; font-size: 0.9rem;">United Kingdom of Benelux</p>
+        </section>
 
-            <h3>国家目標</h3>
-            <p>
-                ■ 防衛：強固な城壁と高度な防衛システムの構築<br>
-                ■ 使命：盤石な体制を築き、国民の平和を永久に守り抜く
-            </p>
-        </div>
+        <div class="container">
+            <!-- HOME -->
+            <div id="home" class="page-content glass active">
+                <h2>Welcome</h2>
+                <p>ここはMikancatが暇だから作ったベネルクス連合王国のホームページ？です</p>
+                <p><strong>最新ニュース：</strong> 住民が6人を突破しました！</p>
+                
+                <h2>国家情報</h2>
+                <div class="info-box">
+                    【国家名】ベネルクス連合王国<br>
+                    【首都】アムステルダム<br>
+                    【国王】Mikancat10<br>
+                    【同盟国】アンカレッジ、セヴァストポリ<br>
+                    【公用語】オランダ語、日本語<br>
+                    【所属連合】なし<br>
+                    <br>
+                    <h2>国旗</h2>
+                        <div class="flag-container">
+                        <img src="https://i.imgur.com/CNSHA5D.png" alt="国旗" class="flag-image">
+                        </div>
+                </div>
 
-        <div id="charter" class="page-content">
-            <h2>外部リンク</h2>
-            <p>王国の公式コミュニティおよび関連リンクです。</p>
-            <ul>
-                <li><a href="https://discord.gg/hw9u944Ubs" target="_blank">公式Discordサーバー</a></li>
-            </ul>
-            
-            <h2>サーバー状況</h2>
-            <div class="discord-section">
-                <iframe src="https://discord.com/widget?id=1475836971170664592&theme=dark" width="100%" height="500" allowtransparency="true" frameborder="0" sandbox="allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts"></iframe>
+                <div class="military-slider">
+                    <div class="slider-track">
+                        <img src="https://i.imgur.com/BInF9FA.png" alt="景観1">
+                        <img src="https://i.imgur.com/kHHBIWn.png" alt="景観2">
+                        <img src="https://i.imgur.com/sDjDnhm.png" alt="景観3">
+                        <img src="https://i.imgur.com/xmL9zWk.png" alt="景観4">
+                        <img src="https://i.imgur.com/829jk52.png" alt="地図">
+                        
+                        <img src="https://i.imgur.com/BInF9FA.png" alt="景観1">
+                        <img src="https://i.imgur.com/kHHBIWn.png" alt="景観2">
+                        <img src="https://i.imgur.com/sDjDnmm.png" alt="景観3">
+                        <img src="https://i.imgur.com/xmL9zWk.png" alt="景観4">
+                        <img src="https://i.imgur.com/829jk52.png" alt="地図">
+                    </div>
+                </div>
+
+                <h2>構成地域</h2>
+                <div class="info-box">
+                <p>ベネルクス連合王国は、欧州本土とアジアの拠点が結集した連邦制国家です。</p>
+                <ul>
+                    <h3>ヨーロッパ</h3>
+                    <li>オランダ王国</li>
+                    <li>ルクセンブルク大公国</li>
+                    <h3>旧拠点</h3>
+                    <li>ベルギー王国（旧拠点）</li>
+                    <li>鹿児島県（アジア）</li>
+                </ul>
+                </div>
+
+                <h2>最新ニュース</h2>
+                <div class="info-box">
+                <p>・2026/03/07 - 国土面積が拡大！世界面積ランキング9位にランクイン！</p>
+                <p>・2026/03/07 - 住民が6人突破！</p>
+                <p>・2026/02/20 - ベネルクス連合王国、正式に誕生！</p>
+                </div>
+            </div>
+
+            <!-- ABOUT -->
+            <div id="about" class="page-content glass">
+                <h2>我々について</h2>
+                <p>ベネルクス連合王国は、強固な守りと規律を兼ね備えた「軍事国家」を目指しています。</p>
+
+                <h3>国家目標</h3>
+                <div class="info-box">
+                    ■ 防衛：強固な城壁と高度な防衛システムの構築<br>
+                    ■ 使命：盤石な体制を築き、国民の平和を永久に守り抜く
+                </div>
+            </div>
+
+            <!-- LINKS -->
+            <div id="charter" class="page-content glass">
+                <h2>外部リンク</h2>
+                <p>王国の公式コミュニティおよび関連リンクです。</p>
+                <ul>
+                    <li><a href="https://discord.gg/hw9u944Ubs" target="_blank">公式Discordサーバー</a></li>
+                </ul>
+                
+                <h2>サーバー状況</h2>
+                <div class="discord-section">
+                    <iframe src="https://discord.com/widget?id=1475836971170664592&theme=dark" width="100%" height="500" allowtransparency="true" frameborder="0" sandbox="allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts"></iframe>
+                </div>
+            </div>
+
+            <!-- RECRUIT -->
+            <div id="recruit" class="page-content glass">
+                <h2>国民募集</h2>
+                <p>ベネルクス連合王国は、新しい国民を積極的に募集しています。共に軍事国家の礎を築く同志を求めています。</p>
+                <p><strong>【募集要項】</strong><br>
+                   ・サーバーのルールを遵守できる方</p>
+                <p style="margin-top: 30px;">
+                    <span style="background: rgba(128,128,128,0.08); padding: 12px 24px; border: 1px solid var(--glass-border); border-radius: 8px; display: inline-block;">
+                        連絡先：<strong>Discord <a href="https://discord.com/users/1424679085396725770" target="_blank">@mikancat10</a></strong>
+                    </span>
+                </p>
             </div>
         </div>
 
-        <div id="recruit" class="page-content">
-            <h2>国民募集</h2>
-            <p>ベネルクス連合王国は、新しい国民を積極的に募集しています。共に軍事国家の礎を築く同志を求めています。</p>
-            <p><strong>【募集要項】</strong><br>
-               ・サーバーのルールを遵守できる方</p>
-            <p style="margin-top: 30px;">
-                <span style="background: #222; padding: 10px 20px; border: 1px solid #444;">
-                    連絡先：<strong>Discord @mikancat10</strong>
-                </span>
-            </p>
-        </div>
-    </div>
+        <footer>
+            <span class="footer-logo">UNITED KINGDOM OF BENELUX</span>
+            <p style="opacity: 0.5; margin-bottom: 10px;">注意事項:現実での政治団体などには一切関係ありません(これはゲームの話です)</p>
+            <p style="opacity: 0.3;">&copy; 2026 UNITED KINGDOM OF BENELUX. <br>Minimalism & Glassmorphism Design.</p>
+        </footer>
+    </main>
 
-    <footer>
-        注意事項:現実での政治団体などには一切関係ありません(これはゲームの話です)<br>
-        &copy; 2026 UNITED KINGDOM OF BENELUX.
-    </footer>
-</div>
+    <script>
+        function showPage(pageId, element) {
+            const pages = document.querySelectorAll('.page-content');
+            pages.forEach(page => page.classList.remove('active'));
 
-<script>
-    function showPage(pageId, element) {
-        const pages = document.querySelectorAll('.page-content');
-        pages.forEach(page => page.classList.remove('active'));
+            const navItems = document.querySelectorAll('.nav-item');
+            navItems.forEach(item => item.classList.remove('active'));
 
-        const navItems = document.querySelectorAll('.nav-item');
-        navItems.forEach(item => item.classList.remove('active'));
+            document.getElementById(pageId).classList.add('active');
+            element.classList.add('active');
 
-        document.getElementById(pageId).classList.add('active');
-        element.classList.add('active');
+            const sidebar = document.querySelector('sidebar');
+            if(sidebar.classList.contains('open')) {
+                toggleSidebar();
+            }
 
-        window.scrollTo({top: 0, behavior: 'smooth'});
-    }
-</script>
+            window.scrollTo({top: 0, behavior: 'smooth'});
+        }
 
+        function toggleSidebar() {
+            const sidebar = document.querySelector('sidebar');
+            const toggleBtn = document.querySelector('.menu-toggle');
+            sidebar.classList.toggle('open');
+            
+            if(sidebar.classList.contains('open')) {
+                toggleBtn.innerText = '✕';
+            } else {
+                toggleBtn.innerText = '☰';
+            }
+        }
+
+        function setTheme(theme) {
+            document.documentElement.setAttribute('data-theme', theme);
+            localStorage.setItem('theme', theme);
+        }
+
+        const savedTheme = localStorage.getItem('theme') || 'main';
+        setTheme(savedTheme);
+    </script>
 </body>
 </html>
